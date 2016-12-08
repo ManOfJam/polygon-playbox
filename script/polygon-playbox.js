@@ -85,12 +85,23 @@ const frame = function() {
 canvas.addEventListener("mousedown", e => {
 	target = hitTest(e.offsetX, e.offsetY);
 
-	if(!target) {
-		target = { x: e.offsetX, y: e.offsetY };
-		points.push(target);
+	if(e.button === 2) {
+		if(target) {
+			let i = points.length;
+			while(i--)
+				if(points[i].x === target.x && points[i].y === target.y)
+					points.splice(i, 1);
+		}
+		return;
 	}
+	else {
+		if(!target) {
+			target = { x: e.offsetX, y: e.offsetY };
+			points.push(target);
+		}
 
-	dragging = true;
+		dragging = true;
+	}
 });
 
 canvas.addEventListener("mouseup", e => {
@@ -106,6 +117,8 @@ canvas.addEventListener("mousemove", e => {
 
 	canvas.style.cursor = hitTest(e.offsetX, e.offsetY) ? "pointer" : "default";
 });
+
+canvas.addEventListener("contextmenu", e => e.preventDefault());
 
 vertexNodesInput.addEventListener("change", e => vertexNodes = vertexNodesInput.checked);
 centroidNodeInput.addEventListener("change", e => centroidNode = centroidNodeInput.checked);
